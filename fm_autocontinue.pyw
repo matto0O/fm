@@ -54,18 +54,20 @@ def clickButton(hwnd, t, clicks):
     win32gui.SetForegroundWindow(focusedOn)
     pgui.moveTo(prevPosition)
 
-def main(refreshRate:float, previewTime:float, clicks:int):
+def main(repeat:bool=False, refreshRate:float = 10.0, previewTime:float = 0.0, clicks:int=1):
     while True:
         try:
             hwnd = win32gui.FindWindow(None, "Football Manager 2023")
-            clickButton(hwnd, previewTime)
+            clickButton(hwnd, previewTime, clicks)
             time.sleep(refreshRate)
+            if not repeat: break
         except pgui.FailSafeException:
             pgui.moveTo(0,0)
             win32gui.SetForegroundWindow(hwnd)     
 
 if __name__ == '__main__':
-    main(refreshRate=3, previewTime=1, clicks=11)
+    main()
+    exit()
     # refreshRate - jak często w sekundach nastąpi przeklikiwanie
     # previewTime - jak długo program pozostawi widocznego fma przed przeklikaniu (tj. ile czasu będzie na przeczytanie zanim kliknie się continue)
     # clicks - ile razy kliknie w kontynuuj 
