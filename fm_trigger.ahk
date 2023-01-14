@@ -34,7 +34,6 @@ myGui.show()
 
 autocontinue(*)
 {
-    MsgBox "clicked"
     currentWindow := WinGetID("A")
     fmWindow := WinExist("Football Manager 2023")
     MouseGetPos &xpos, &ypos
