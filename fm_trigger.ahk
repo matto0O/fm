@@ -1,16 +1,26 @@
 ﻿#Requires AutoHotkey v2.0
+#SingleInstance
+
+achk := "continueHotkey"
+acc := "continueClicks"
+
+currentHK := RegRead("HKEY_LOCAL_MACHINE\SOFTWARE\FMACsettings", achk, "^L")
+clicks := RegRead("HKEY_LOCAL_MACHINE\SOFTWARE\FMACsettings", acc, 1)
 
 myGui := Gui()
 myGui.Add("Text",, "Choose your FM Auto-continue shortcut:")
-currentHK := "^L"
-clicks := 1
 myGui.Add("Hotkey","vChosenHotkey", currentHK)
-button := myGui.Add("button","Default w80","Apply shortcut")
+MyGui.Add("Text",,"Amount of clicks to perform:")
+MyGui.Add("Edit")
+MyGui.Add("UpDown", "vClicksSetter Range1-20", clicks)
+button := myGui.Add("button","Default w80","Apply changes")
 button.OnEvent("Click", onClick)
-Hotkey currentHK, ac
+Hotkey currentHK, autocontinue
+myGui.show()
 
-clickButton()
+autocontinue(*)
 {
+    MsgBox "clicked"
     currentWindow := WinGetID("A")
     fmWindow := WinExist("Football Manager 2023")
     MouseGetPos &xpos, &ypos
@@ -19,28 +29,29 @@ clickButton()
         global clicks
         WinActivate fmWindow
         WinGetPos &xwin, &ywin, &width, &height, fmWindow
-        MouseMove (xwin+width*0.98), (ywin+height*0.02)
+        MouseMove (xwin+width*0.95), (ywin+height*0.05)
         MouseClick "left",,,clicks
-        MouseMove xpos, ypos
         WinActivate currentWindow
         MouseMove xpos, ypos
     }
 }
 
-ac(*){
-    clickButton()
-}
-
 onClick(*)
 {
+    global clicks
     global currentHK
     Hotkey currentHK, "off"
     currentHK := myGui['ChosenHotkey'].value
-    Hotkey currentHK, ac
-    MsgBox ("Your new shortcut is " currentHK)
+    Hotkey currentHK, autocontinue
+    clicks := myGui['ClicksSetter'].value
+    saveSettings(currentHK, clicks)
+    MsgBox ("Settings saved!")
 }
 
-^P::
+saveSettings(hk, c)
 {
-    myGui.show()
+    global achk
+    global acc
+    RegWrite hk, "REG_SZ", "HKEY_LOCAL_MACHINE\SOFTWARE\FMACsettings", achk
+    RegWrite c, "REG_DWORD", "HKEY_LOCAL_MACHINE\SOFTWARE\FMACsettings", acc
 }
